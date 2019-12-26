@@ -14,7 +14,21 @@ public:
 
 	void updateCell(const sf::Vector2f click);
 	
+	std::vector<Chunk> visibleChunks(const sf::Vector2f from, const sf::Vector2f to);
+
+	int state(const sf::Vector2i cellCoord);
+
+
+	void update();
+
+	void paint(sf::Vector2i click, int mode);
+
+
 	std::vector<Chunk> chunks;
-	//std::map<sf::Vector2i, int> tags;
+	std::map<std::pair<int,int>, int> tags;
+
+private:
+	std::pair<int, int> firstChunk;
+	std::pair<int, int> lastChunk;
 };
 
