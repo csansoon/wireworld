@@ -4,6 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <vector>
 #include <map>
+#include <fstream>
 class Circuit
 {
 public:
@@ -14,7 +15,7 @@ public:
 
 	void updateCell(const sf::Vector2f click);
 	
-	std::vector<Chunk> visibleChunks(const sf::Vector2f from, const sf::Vector2f to);
+	std::vector<Chunk> visibleChunks(const sf::Vector2i from, const sf::Vector2i to);
 
 	int state(const sf::Vector2i cellCoord);
 
@@ -26,6 +27,9 @@ public:
 
 	std::vector<Chunk> chunks;
 	std::map<std::pair<int,int>, int> tags;
+
+	bool load(std::string file);
+	bool save(std::string file);
 
 private:
 	std::pair<int, int> firstChunk;

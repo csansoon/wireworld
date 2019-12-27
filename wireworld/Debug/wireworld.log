@@ -1,36 +1,25 @@
-﻿  Circuit.cpp
-C:\Users\sanso\source\repos\wireworld\wireworld\Circuit.cpp(32): warning C4018: '<': no coinciden signed/unsigned
-C:\Users\sanso\source\repos\wireworld\wireworld\Circuit.cpp(111): warning C4018: '<': no coinciden signed/unsigned
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.20.27508\include\utility(123): warning C4244: 'inicializando': conversión de 'const T' a '_Ty1'; posible pérdida de datos
+﻿  main.cpp
+C:\Users\sanso\source\repos\wireworld\wireworld\main.cpp(50): warning C4244: 'argumento': conversión de 'int' a 'T'; posible pérdida de datos
           with
           [
               T=float
           ]
-          and
-          [
-              _Ty1=int
-          ]
-  C:\Users\sanso\source\repos\wireworld\wireworld\Circuit.cpp(52): note: vea la referencia a la creación de instancias de plantilla de función 'std::pair<int,int>::pair<const T&,const T&,0>(_Other1,_Other2) noexcept' que se está compilando
-          with
-          [
-              T=float,
-              _Other1=const float &,
-              _Other2=const float &
-          ]
-  C:\Users\sanso\source\repos\wireworld\wireworld\Circuit.cpp(52): note: vea la referencia a la creación de instancias de plantilla de función 'std::pair<int,int>::pair<const T&,const T&,0>(_Other1,_Other2) noexcept' que se está compilando
-          with
-          [
-              T=float,
-              _Other1=const float &,
-              _Other2=const float &
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.20.27508\include\utility(123): warning C4244: 'inicializando': conversión de 'const T' a '_Ty2'; posible pérdida de datos
+C:\Users\sanso\source\repos\wireworld\wireworld\main.cpp(51): warning C4244: 'argumento': conversión de 'int' a 'T'; posible pérdida de datos
           with
           [
               T=float
           ]
-          and
+C:\Users\sanso\source\repos\wireworld\wireworld\main.cpp(53): warning C4244: 'argumento': conversión de 'int' a 'T'; posible pérdida de datos
+          with
           [
-              _Ty2=int
+              T=float
+          ]
+C:\Users\sanso\source\repos\wireworld\wireworld\main.cpp(91): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\sanso\source\repos\wireworld\wireworld\main.cpp(92): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\sanso\source\repos\wireworld\wireworld\main.cpp(159): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\sanso\source\repos\wireworld\wireworld\main.cpp(168): warning C4244: 'argumento': conversión de 'int' a 'T'; posible pérdida de datos
+          with
+          [
+              T=float
           ]
   wireworld.vcxproj -> C:\Users\sanso\source\repos\wireworld\Debug\wireworld.exe

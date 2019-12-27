@@ -11,10 +11,19 @@ Color		cableColor	= Color::Color(250, 207, 90, 255);
 Color		headColor	= Color::Color(79, 157, 166, 255);
 Color		tailColor	= Color::Color(255, 89, 89, 255);
 
+int pixelSize = 64;
 
 
 
-
+Vector2i positionInMap(Vector2i position, RenderWindow& window,View& view) {
+	Vector2f mousePosition = window.mapPixelToCoords(Vector2i(position), view);
+	Vector2f correctMousePosition = mousePosition;
+	if (correctMousePosition.x < 0) correctMousePosition.x -= pixelSize;
+	if (correctMousePosition.y < 0) correctMousePosition.y -= pixelSize;
+	Vector2i mouseCell = Vector2i(correctMousePosition);
+	mouseCell /= pixelSize;
+	return mouseCell;
+}
 
 
 int main() {
@@ -38,12 +47,18 @@ int main() {
 
 	Clock timer;
 
-	RectangleShape chunk(Vector2f(100,100));
-	RectangleShape pixel(Vector2f(1, 1));
+	RectangleShape chunk(Vector2f(100 * pixelSize,100 * pixelSize));
+	RectangleShape pixel(Vector2f(1 * pixelSize, 1 * pixelSize));
+
+	RectangleShape cursor(Vector2f(1 * pixelSize, 1 * pixelSize));
+	cursor.setOutlineThickness(20);
+	cursor.setFillColor(Color::Color(0, 0, 0, 0));
 
 	View view(Vector2f(0,0),Vector2f(800,600));	// Center, Size
 
 	Circuit circuit;
+	if (not circuit.load("test.circuit")) std::cout << "[ERROR LOADING test.circuit FILE]" << std::endl;
+	else std::cout << "[CIRCUIT LOADED FROM test.circuit]" << std::endl;
 
 	Vector2f mousePosition = window.mapPixelToCoords(Mouse::getPosition(window), view);
 	Vector2f lastMousePosition = mousePosition;
@@ -66,8 +81,11 @@ int main() {
 				view.setSize(Vector2f(window.getSize()));
 			}
 
-			if (event.type == Event::Closed)
+			if (event.type == Event::Closed) {
+				if (not circuit.save("test.circuit")) std::cout << "[ERROR SAVING test.circuit FILE]" << std::endl;
+				else std::cout << "[CIRCUIT SAVED AS test.circuit]" << std::endl;
 				window.close();
+			}
 
 			if (event.type == Event::MouseWheelMoved) {
 				if (event.mouseWheel.delta > 0) view.zoom(0.9);
@@ -103,21 +121,20 @@ int main() {
 					else { std::cout << "[NOW PLAYING]" << std::endl; playing = true; }
 					//circuit.update();
 				}
-				if (event.key.code == Keyboard::Num0) mode = 0;
-				if (event.key.code == Keyboard::Num1) mode = 1;
-				if (event.key.code == Keyboard::Num2) mode = 2;
-				if (event.key.code == Keyboard::Num3) mode = 3;
+				if (event.key.code == Keyboard::Num0) { mode = 0; cursor.setOutlineColor(Color::Color(0, 0, 0, 127)); }
+				if (event.key.code == Keyboard::Num1) { mode = 1; cursor.setOutlineColor(cableColor - Color::Color(0, 0, 0, 128)); }
+				if (event.key.code == Keyboard::Num2) { mode = 2; cursor.setOutlineColor(headColor - Color::Color(0, 0, 0, 128)); }
+				if (event.key.code == Keyboard::Num3) { mode = 3; cursor.setOutlineColor(tailColor - Color::Color(0, 0, 0, 128)); }
 			}
 		}
 
 
 
 		/* UPDATE */
-		mousePosition = window.mapPixelToCoords(Mouse::getPosition(window), view);
-		Vector2f correctMousePosition = mousePosition;
-		if (correctMousePosition.x < 0) --correctMousePosition.x;
-		if (correctMousePosition.y < 0) --correctMousePosition.y;
-		mouseCell = Vector2i(correctMousePosition);
+		Vector2f mousePosition = window.mapPixelToCoords(Mouse::getPosition(), view);
+		mouseCell = positionInMap(Mouse::getPosition(window), window, view);
+
+		cursor.setPosition(Vector2f(mouseCell * pixelSize));
 
 
 		if (dragging) {
@@ -137,17 +154,18 @@ int main() {
 
 		window.clear(backgroundColor);
 
-		window.draw(title);
 
-		std::vector<Chunk> visibleChunks = circuit.visibleChunks(window.mapPixelToCoords(Vector2i(0,0),view), window.mapPixelToCoords(Vector2i(window.getSize()),view));
+		std::vector<Chunk> visibleChunks = circuit.visibleChunks(positionInMap(Vector2i(0, 0), window, view), positionInMap(Vector2i(window.getSize()), window, view));
 		for (int i = 0; i < visibleChunks.size(); ++i) {
 			//Draw active visible chunk
-			//chunk.setPosition(Vector2f(visibleChunks[i].position));
-			//window.draw(chunk);
+			chunk.setPosition(Vector2f(visibleChunks[i].position * pixelSize));
+			if (visibleChunks[i].position.x/100 % 2 == visibleChunks[i].position.y/100 % 2) chunk.setFillColor(Color::Color(255,255,255,16));
+			else chunk.setFillColor(Color::Color(255, 255, 255, 32));
+			window.draw(chunk);
 
 			//Draw active visible pixels
 			for (auto it = visibleChunks[i].activeCells.begin(); it != visibleChunks[i].activeCells.end(); ++it) {
-				pixel.setPosition(Vector2f(it->first, it->second));
+				pixel.setPosition(Vector2f(it->first * pixelSize, it->second * pixelSize));
 				switch (circuit.state(Vector2i(it->first, it->second))) {
 					case 0:
 						break;
@@ -171,6 +189,8 @@ int main() {
 		}
 
 
+		window.draw(title);
+		window.draw(cursor);
 
 		window.display();
 

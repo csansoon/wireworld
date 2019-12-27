@@ -43,8 +43,11 @@ void Circuit::createChunk(const sf::Vector2i coord) {
 	chunks.push_back(newChunk);
 
 	std::cout << "[Created chunk at (" << newChunk.position.x << "," << newChunk.position.y << ")]" << std::endl;
-	if (newChunk.position.x < firstChunk.first and newChunk.position.y < firstChunk.second) firstChunk = { newChunk.position.x, newChunk.position.y };
-	if (newChunk.position.x > lastChunk.first and newChunk.position.y > lastChunk.second) lastChunk = { newChunk.position.x, newChunk.position.y };
+	if (newChunk.position.x < firstChunk.first) firstChunk.first = newChunk.position.x;
+	if (newChunk.position.y < firstChunk.second) firstChunk.second = newChunk.position.y;
+	if (newChunk.position.x > lastChunk.first) lastChunk.first = newChunk.position.x;
+	if (newChunk.position.y > lastChunk.first) lastChunk.first = newChunk.position.y;
+	
 }
 
 
@@ -62,7 +65,7 @@ void Circuit::updateCell(const sf::Vector2f click) {
 }
 
 
-std::vector<Chunk> Circuit::visibleChunks(const sf::Vector2f from, const sf::Vector2f to) {
+std::vector<Chunk> Circuit::visibleChunks(const sf::Vector2i from, const sf::Vector2i to) {
 
 	pair<int, int> fromChunk = { from.x, from.y };
 	if (fromChunk.first < 0) fromChunk.first -= 100;
@@ -177,4 +180,52 @@ void Circuit::paint(sf::Vector2i click, int mode) {
 	else if (state(sf::Vector2i(coord.first, coord.second)) == 0) chunks[tags[chunkCoord]].activeCells.insert(coord);
 	chunks[tags[chunkCoord]].matrix[localCoord.first][localCoord.second] = mode;
 	
+}
+
+
+bool Circuit::load(std::string filename) {
+	ifstream file;
+	file.open("saves/" + filename);
+	if (not file.is_open()) return false;
+
+	int x, y;
+	while (file >> x >> y) {
+
+		createChunk(sf::Vector2i(x, y));
+
+		for (int i = 0; i < 100; ++i) {
+			for (int j = 0; j < 100; ++j) {
+				int cell;
+				file >> cell;
+				
+				chunks[chunks.size() - 1].matrix[i][j] = cell;
+
+				if (cell != 0) {
+					chunks[chunks.size() - 1].activeCells.insert({ x + i, y + j });
+				}
+			}
+		}
+	}
+	file.close();
+	return true;
+}
+
+bool Circuit::save(std::string filename) {
+	ofstream file;
+	file.open("saves/" + filename);
+	if (not file.is_open()) return false;
+
+	for (int c = 0; c < chunks.size(); ++c) {
+		//file << chunks[c].position.x << chunks[c].position.y;
+		file.write(reinterpret_cast<const char*>(&chunks[c].position.y), sizeof(int));
+		file.write(reinterpret_cast<const char*>(&chunks[c].position.y), sizeof(int));
+		for (int i = 0; i < 100; ++i) {
+			for (int j = 0; j < 100; ++j) {
+				//file << chunks[c].matrix[i][j];
+				file.write(reinterpret_cast<const char*>(&chunks[c].matrix[i][j]), sizeof(int));
+			}
+		}
+	}
+	file.close();
+	return true;
 }
