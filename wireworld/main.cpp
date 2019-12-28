@@ -46,12 +46,13 @@ int main() {
 	/* OBJECTS */
 
 	Clock timer;
+	Clock draggingTime;
 
 	RectangleShape chunk(Vector2f(100 * pixelSize,100 * pixelSize));
 	RectangleShape pixel(Vector2f(1 * pixelSize, 1 * pixelSize));
 
 	RectangleShape cursor(Vector2f(1 * pixelSize, 1 * pixelSize));
-	cursor.setOutlineThickness(20);
+	cursor.setOutlineThickness(5);
 	cursor.setFillColor(Color::Color(0, 0, 0, 0));
 
 	View view(Vector2f(0,0),Vector2f(800,600));	// Center, Size
@@ -70,6 +71,7 @@ int main() {
 	bool dragging = false;
 	bool Pressed = false;
 	while (window.isOpen()) {
+		Vector2f mousePosition = window.mapPixelToCoords(Mouse::getPosition(), view);
 
 
 
@@ -94,14 +96,13 @@ int main() {
 
 			if (event.type == Event::MouseButtonPressed) {
 				if (not dragging and event.mouseButton.button == Mouse::Right) {
-					dragging = true;
 					lastMousePosition = mousePosition;
+					dragging = true;
+					draggingTime.restart();
 				}
-				//if (event.mouseButton.button == Mouse::Left) {
-				//	circuit.paint(mouseCell, mode);
-				//	Pressed = true;
-				//}
 			}
+
+
 
 			if (Mouse::isButtonPressed(Mouse::Left)) {
 				circuit.paint(mouseCell, mode);
@@ -110,6 +111,10 @@ int main() {
 
 
 			if (event.type == Event::MouseButtonReleased) {
+				if (dragging and event.mouseButton.button == Mouse::Right and draggingTime.getElapsedTime().asMilliseconds() < 100) {
+					dragging = false;
+					circuit.paint(mouseCell, 0);
+				}
 				if (dragging and event.mouseButton.button == Mouse::Right) {
 					dragging = false;
 				}
@@ -131,7 +136,7 @@ int main() {
 
 
 		/* UPDATE */
-		Vector2f mousePosition = window.mapPixelToCoords(Mouse::getPosition(), view);
+		//Vector2f mousePosition = window.mapPixelToCoords(Mouse::getPosition(), view);
 		mouseCell = positionInMap(Mouse::getPosition(window), window, view);
 
 		cursor.setPosition(Vector2f(mouseCell * pixelSize));
@@ -146,7 +151,6 @@ int main() {
 				timer.restart();
 			}
 		}
-		//circle.setPosition(mousePosition);
 
 
 		/* PRINT */
