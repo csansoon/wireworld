@@ -117,6 +117,9 @@ void Circuit::update() {
 		for (auto it = chunks[c].activeCells.begin(); it != chunks[c].activeCells.end(); ++it) {
 			
 			pair<int, int> cell = { it->first, it->second };
+			pair<int, int> localCoord = { cell.first % 100, cell.second % 100 };
+			if (localCoord.first < 0) localCoord.first = 100 + localCoord.first;
+			if (localCoord.second < 0) localCoord.second = 100 + localCoord.second;
 			int counter = 0;
 
 			switch (state(sf::Vector2i(cell.first,cell.second))) {
@@ -137,16 +140,16 @@ void Circuit::update() {
 						else if (i == 3 and state(sf::Vector2i(cell.first-1, cell.second-1)) == 2) ++counter; //LEFT + UP
 					}
 					if (counter == 1 or counter == 2) {
-						newMatrix[it->first - chunks[c].position.x][it->second - chunks[c].position.y] = 2;
+						newMatrix[localCoord.first][localCoord.second] = 2;
 					}
 					break;
 
 				case 2:			//head
-					newMatrix[it->first - chunks[c].position.x][it->second - chunks[c].position.y] = 3;
+					newMatrix[localCoord.first][localCoord.second] = 3;
 					break;
 
 				case 3:			//tail
-					newMatrix[it->first - chunks[c].position.x][it->second - chunks[c].position.y] = 1;
+					newMatrix[localCoord.first][localCoord.second] = 1;
 					break;
 
 			}
@@ -166,8 +169,8 @@ void Circuit::paint(sf::Vector2i click, int mode) {
 	if (localCoord.second < 0) localCoord.second = 100 + localCoord.second;
 
 	pair<int, int> chunkCoord = coord;
-	if (chunkCoord.first < 0) chunkCoord.first -= 100;
-	if (chunkCoord.second < 0) chunkCoord.second -= 100;
+	if (chunkCoord.first < 0) chunkCoord.first -= 99;
+	if (chunkCoord.second < 0) chunkCoord.second -= 99;
 	chunkCoord = { (chunkCoord.first / 100) * 100, (chunkCoord.second / 100) * 100 };
 
 	std::cout << "[CHUNK (" << chunkCoord.first << "," << chunkCoord.second << ") - LOCAL COORDINATE (" << localCoord.first << "," << localCoord.second << ")]" << std::endl;

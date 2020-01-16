@@ -28,6 +28,36 @@ Vector2i positionInMap(Vector2i position, RenderWindow& window,View& view) {
 
 int main() {
 
+
+	/*
+	Vector2i click = Vector2i(-102, -101);
+	std::pair<int, int> coord = { click.x, click.y };
+	std::cout << "GLOBAL COORD = (" << coord.first << "," << coord.second << ")" << std::endl;
+	std::pair<int, int> localCoord = { click.x % 100, click.y % 100 };
+	std::cout << "localCoord = [" << localCoord.first << "," << localCoord.second << "]" << std::endl;
+	if (localCoord.first < 0) localCoord.first = 100 + localCoord.first;
+	if (localCoord.second < 0) localCoord.second = 100 + localCoord.second;
+	std::cout << "improved localCoord = [" << localCoord.first << "," << localCoord.second << "]" << std::endl;
+
+
+	std::pair<int, int> chunkCoord = coord;
+	if (chunkCoord.first < 0) chunkCoord.first -= 99;
+	if (chunkCoord.second < 0) chunkCoord.second -= 99;
+	chunkCoord = { (chunkCoord.first / 100) * 100, (chunkCoord.second / 100) * 100 };
+	std::cout << "chunkCoord = {" << chunkCoord.first << "," << chunkCoord.second << "}" << std::endl;
+
+
+
+	return 0;
+	
+	*/
+
+
+
+
+
+
+
 	/* SETUP */
 
 	RenderWindow window(VideoMode(800, 600), "wireworld");
@@ -40,7 +70,7 @@ int main() {
 
 	Text title;
 	title.setFont(ProductSans);
-	title.setString("Patty es la mejor");
+	title.setString("WIREWORLD");
 
 
 	/* OBJECTS */
@@ -102,16 +132,13 @@ int main() {
 				}
 			}
 
-
-
 			if (Mouse::isButtonPressed(Mouse::Left)) {
 				circuit.paint(mouseCell, mode);
 				Pressed = true;
 			}
 
-
 			if (event.type == Event::MouseButtonReleased) {
-				if (dragging and event.mouseButton.button == Mouse::Right and draggingTime.getElapsedTime().asMilliseconds() < 100) {
+				if (dragging and event.mouseButton.button == Mouse::Right and draggingTime.getElapsedTime().asMilliseconds() < 150) {
 					dragging = false;
 					circuit.paint(mouseCell, 0);
 				}
@@ -163,7 +190,7 @@ int main() {
 		for (int i = 0; i < visibleChunks.size(); ++i) {
 			//Draw active visible chunk
 			chunk.setPosition(Vector2f(visibleChunks[i].position * pixelSize));
-			if (visibleChunks[i].position.x/100 % 2 == visibleChunks[i].position.y/100 % 2) chunk.setFillColor(Color::Color(255,255,255,16));
+			if (visibleChunks[i].position.x/100 % 2 == visibleChunks[i].position.y/100 % 2 or visibleChunks[i].position.x / 100 % 2 * -1 == visibleChunks[i].position.y / 100 % 2) chunk.setFillColor(Color::Color(255,255,255,16));
 			else chunk.setFillColor(Color::Color(255, 255, 255, 32));
 			window.draw(chunk);
 
